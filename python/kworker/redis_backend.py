@@ -10,11 +10,11 @@ Key schema:
 
 import json
 import time
+from typing import Any
 
 import redis
 
 from kworker.task import TaskInstance
-from typing import Any
 
 # Redis key prefixes
 QUEUE_KEY = "kworker:queue:{queue}"
