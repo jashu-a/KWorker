@@ -14,6 +14,7 @@ import time
 import redis
 
 from kworker.task import TaskInstance
+from typing import Any
 
 # Redis key prefixes
 QUEUE_KEY = "kworker:queue:{queue}"
@@ -120,7 +121,7 @@ class RedisBackend:
             depends_on=json.loads(task_data.get("depends_on", "[]")),
         )
 
-    def complete(self, task_id: str, result: any = None) -> None:
+    def complete(self, task_id: str, result: Any = None) -> None:
         """Mark a task as completed and store its result."""
         pipe = self.client.pipeline()
         task_key = TASK_KEY.format(task_id=task_id)
@@ -176,7 +177,7 @@ class RedisBackend:
         task_key = TASK_KEY.format(task_id=task_id)
         return self.client.hgetall(task_key) or None
 
-    def get_result(self, task_id: str) -> any | None:
+    def get_result(self, task_id: str) -> Any | None:
         """Get the result of a completed task."""
         result_key = RESULT_KEY.format(task_id=task_id)
         raw = self.client.get(result_key)
