@@ -1,10 +1,10 @@
 """Client SDK for submitting and monitoring tasks."""
 
 import time
-from typing import Any, Optional
+from typing import Any
 
-from kworker.task import TaskDefinition, TaskInstance, create_task_instance
 from kworker.redis_backend import RedisBackend
+from kworker.task import TaskDefinition, create_task_instance
 
 
 class JobHandle:

@@ -1,12 +1,12 @@
 """FastAPI admin and monitoring API for KWorker."""
 
 import os
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import Response
-from pydantic import BaseModel
-
-from kworker.redis_backend import RedisBackend
 from kworker.metrics import MetricsCollector
+from kworker.redis_backend import RedisBackend
+from pydantic import BaseModel
 
 app = FastAPI(
     title="KWorker Admin API",

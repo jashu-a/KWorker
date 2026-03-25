@@ -2,10 +2,11 @@
 
 import functools
 import json
-import uuid
 import time
+import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable, Optional
+from typing import Any
 
 from kworker.retry import RetryPolicy
 
@@ -21,7 +22,7 @@ class TaskDefinition:
     queue: str = "default"
     priority: int = 5
     max_retries: int = 3
-    timeout_seconds: Optional[int] = None
+    timeout_seconds: int | None = None
     retry_policy: RetryPolicy = field(default_factory=RetryPolicy)
 
     def __call__(self, *args, **kwargs):
@@ -42,10 +43,10 @@ class TaskInstance:
     attempt: int = 0
     max_retries: int = 3
     created_at: float = 0.0
-    deadline: Optional[float] = None
+    deadline: float | None = None
     depends_on: list[str] = field(default_factory=list)
     result: Any = None
-    error: Optional[str] = None
+    error: str | None = None
 
     def to_json(self) -> str:
         return json.dumps({
@@ -71,7 +72,7 @@ class TaskInstance:
     def to_cpp_task(self):
         """Convert to C++ Task struct for scheduling engine."""
         try:
-            from _kworker_core import Task as CppTask, TaskState
+            from _kworker_core import Task as CppTask, TaskState  # noqa: I001
         except ImportError:
             raise RuntimeError(
                 "C++ engine not built. Run: mkdir build && cd build "
@@ -93,13 +94,13 @@ class TaskInstance:
 
 
 def task(
-    _func: Optional[Callable] = None,
+    _func: Callable | None = None,
     *,
-    name: Optional[str] = None,
+    name: str | None = None,
     queue: str = "default",
     priority: int = 5,
     max_retries: int = 3,
-    timeout_seconds: Optional[int] = None,
+    timeout_seconds: int | None = None,
 ) -> Callable:
     """Decorator to register a function as a KWorker task.
 

@@ -5,13 +5,10 @@ Set KWORKER_REDIS_URL env var or defaults to redis://localhost:6379.
 """
 
 import os
-import time
+
 import pytest
-
 from kworker.redis_backend import RedisBackend
-from kworker.task import task, TaskInstance, create_task_instance
-from kworker.retry import RetryPolicy
-
+from kworker.task import create_task_instance, task
 
 REDIS_URL = os.getenv("KWORKER_REDIS_URL", "redis://localhost:6379")
 

@@ -13,12 +13,11 @@ import time
 import traceback
 import uuid
 from concurrent.futures import ThreadPoolExecutor
-from typing import Optional
 
-from kworker.redis_backend import RedisBackend
-from kworker.task import TaskInstance, get_handler
-from kworker.retry import RetryPolicy
 from kworker.metrics import MetricsCollector
+from kworker.redis_backend import RedisBackend
+from kworker.retry import RetryPolicy
+from kworker.task import TaskInstance, get_handler
 
 logger = logging.getLogger("kworker.worker")
 
@@ -44,7 +43,7 @@ class Worker:
         self.retry_policy = RetryPolicy()
 
         self._running = False
-        self._executor: Optional[ThreadPoolExecutor] = None
+        self._executor: ThreadPoolExecutor | None = None
 
         # Try to load C++ scheduler
         try:

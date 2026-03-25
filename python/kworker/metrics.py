@@ -9,8 +9,7 @@ Exposes:
     kworker_queue_depth                — Gauge by queue
 """
 
-from prometheus_client import Counter, Gauge, Histogram, CollectorRegistry, generate_latest
-
+from prometheus_client import CollectorRegistry, Counter, Gauge, Histogram, generate_latest
 
 # Use a custom registry so we don't conflict with other Prometheus users
 REGISTRY = CollectorRegistry()

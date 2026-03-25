@@ -1,11 +1,10 @@
 """Tests for retry policy and task model."""
 
-import json
 import time
-import pytest
 
+import pytest
 from kworker.retry import RetryPolicy
-from kworker.task import task, TaskDefinition, TaskInstance, create_task_instance, get_handler
+from kworker.task import TaskDefinition, TaskInstance, create_task_instance, get_handler, task
 
 
 class TestRetryPolicy:

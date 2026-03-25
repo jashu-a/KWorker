@@ -10,12 +10,10 @@ Key schema:
 
 import json
 import time
-from typing import Optional
 
 import redis
 
 from kworker.task import TaskInstance
-
 
 # Redis key prefixes
 QUEUE_KEY = "kworker:queue:{queue}"
@@ -76,7 +74,7 @@ class RedisBackend:
         pipe.execute()
         return task.id
 
-    def dequeue(self, queue: str, worker_id: str) -> Optional[TaskInstance]:
+    def dequeue(self, queue: str, worker_id: str) -> TaskInstance | None:
         """Atomically pop the highest-priority task from a queue.
 
         Uses ZPOPMIN for atomic dequeue — no race conditions between workers.
@@ -173,12 +171,12 @@ class RedisBackend:
         }))
         pipe.execute()
 
-    def get_task_state(self, task_id: str) -> Optional[dict]:
+    def get_task_state(self, task_id: str) -> dict | None:
         """Get current task state from Redis."""
         task_key = TASK_KEY.format(task_id=task_id)
         return self.client.hgetall(task_key) or None
 
-    def get_result(self, task_id: str) -> Optional[any]:
+    def get_result(self, task_id: str) -> any | None:
         """Get the result of a completed task."""
         result_key = RESULT_KEY.format(task_id=task_id)
         raw = self.client.get(result_key)
