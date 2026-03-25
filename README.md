@@ -191,6 +191,3 @@ See `benchmarks/` for reproducible benchmark scripts.
 - **Docker** — Multi-stage container builds
 - **GitHub Actions** — CI/CD (C++ build, Python tests, Docker image)
 
-## License
-
-MIT
