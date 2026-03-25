@@ -1,0 +1,51 @@
+# ── Stage 1: Build C++ engine ──
+FROM python:3.11-slim AS cpp-builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install pybind11
+
+WORKDIR /build
+COPY CMakeLists.txt .
+COPY cpp/ cpp/
+
+RUN mkdir build && cd build \
+    && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_PYTHON=ON \
+    && make -j$(nproc) \
+    && ctest --output-on-failure
+
+# ── Stage 2: Python runtime ──
+FROM python:3.11-slim AS runtime
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libstdc++6 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install Python dependencies
+COPY pyproject.toml .
+RUN pip install --no-cache-dir -e ".[worker]" 2>/dev/null || true
+# Fallback: install deps directly if pyproject.toml install fails
+RUN pip install --no-cache-dir \
+    redis \
+    prometheus-client \
+    fastapi \
+    uvicorn
+
+# Copy C++ compiled module from builder
+COPY --from=cpp-builder /build/build/_kworker_core*.so /app/
+
+# Copy Python source
+COPY python/ python/
+
+# Add the app directory to Python path so the C++ module is found
+ENV PYTHONPATH="/app:/app/python:${PYTHONPATH}"
+
+# Default: run worker
+ENTRYPOINT ["python", "-m", "kworker.worker"]
+CMD ["--queues", "default,high", "--concurrency", "4"]

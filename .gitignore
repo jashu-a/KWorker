@@ -1,0 +1,27 @@
+# Build
+build/
+*.so
+*.o
+*.a
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+.eggs/
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+.docker/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.venv/

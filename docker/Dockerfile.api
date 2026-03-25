@@ -1,0 +1,17 @@
+# API doesn't need the C++ engine — it just talks to Redis
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir \
+    redis \
+    prometheus-client \
+    fastapi \
+    uvicorn[standard]
+
+COPY python/ python/
+ENV PYTHONPATH="/app/python:${PYTHONPATH}"
+
+EXPOSE 8000
+
+ENTRYPOINT ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
